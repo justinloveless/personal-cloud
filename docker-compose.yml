@@ -1,15 +1,17 @@
-version: "3.9"
 services:
   caddy:
-    image: caddy:2
-    ports: ["80:80", "443:443"]
+    build:
+      context: .
+      dockerfile: build/Caddy.Dockerfile
+    ports: [ "80:80", "443:443" ]
     environment:
       - HETZNER_DNS_API_TOKEN=${HETZNER_DNS_API_TOKEN}
+      - HETZNER_API_TOKEN=${HETZNER_DNS_API_TOKEN}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
-    depends_on: [api]
+    depends_on: [ api ]
     restart: unless-stopped
 
   api:
@@ -19,7 +21,7 @@ services:
     env_file: ./.env
     environment:
       - ASPNETCORE_URLS=http://+:8080
-    depends_on: [pgbouncer, postgres]
+    depends_on: [ pgbouncer, postgres ]
     restart: unless-stopped
 
   pgbouncer:
@@ -32,8 +34,8 @@ services:
       - POOL_MODE=transaction
       - MAX_CLIENT_CONN=2000
       - DEFAULT_POOL_SIZE=50
-    ports: ["6432:6432"]
-    depends_on: [postgres]
+    ports: [ "6432:6432" ]
+    depends_on: [ postgres ]
     restart: unless-stopped
 
   postgres:
@@ -45,7 +47,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./seed/admin-init.sql:/docker-entrypoint-initdb.d/00-admin.sql:ro
-    ports: ["5432:5432"]
+    ports: [ "5432:5432" ]
     restart: unless-stopped
 
   redis:
