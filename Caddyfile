@@ -1,0 +1,19 @@
+{
+  email you@example.com
+}
+
+*.yourapp.com {
+  tls {
+    dns hetzner {env.HETZNER_DNS_API_TOKEN}
+  }
+  reverse_proxy api:8080
+}
+
+yourapp.com {
+  encode gzip
+  @api path /api/*
+  reverse_proxy @api api:8080
+  handle {
+    respond "OK" 200
+  }
+}
