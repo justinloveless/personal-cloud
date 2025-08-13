@@ -1,7 +1,7 @@
-using Api.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
+using Shared.Domain;
 
-namespace Api.Infrastructure;
+namespace Shared.Persistence;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
@@ -18,3 +18,5 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         });
     }
 }
+
+

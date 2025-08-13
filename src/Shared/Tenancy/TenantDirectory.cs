@@ -1,7 +1,9 @@
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 
-namespace Api.Infrastructure;
+namespace Shared.Tenancy;
 
 public record TenantContext(string Id, string Subdomain, string DbName, string Plan, string Region);
 
@@ -22,10 +24,12 @@ public class TenantDirectory(IConfiguration cfg, ILogger<TenantDirectory> log) :
 
         await using var conn = new NpgsqlConnection(_adminCs);
         await conn.OpenAsync(ct);
-        await using var cmd = new NpgsqlCommand("""
+        await using var cmd = new NpgsqlCommand(
+            """
             select id::text, subdomain, db_name, plan, region
             from tenants where subdomain = @sub
-        """, conn);
+            """,
+            conn);
         cmd.Parameters.AddWithValue("sub", subdomain);
         await using var reader = await cmd.ExecuteReaderAsync(ct);
         if (!await reader.ReadAsync(ct)) return null;
@@ -42,3 +46,5 @@ public class TenantDirectory(IConfiguration cfg, ILogger<TenantDirectory> log) :
         return ctx;
     }
 }
+
+

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Shared.Tenancy;
 
 namespace Api.Infrastructure;
 
@@ -6,6 +7,13 @@ public class TenantResolutionMiddleware(RequestDelegate next)
 {
     public async Task InvokeAsync(HttpContext context, ITenantDirectory directory)
     {
+        // Bypass tenant resolution for admin endpoints
+        if (context.Request.Path.StartsWithSegments("/api/admin"))
+        {
+            await next(context);
+            return;
+        }
+
         var host = context.Request.Host.Host; // e.g., "acme.yourapp.com"
         var parts = host.Split('.', StringSplitOptions.RemoveEmptyEntries);
 

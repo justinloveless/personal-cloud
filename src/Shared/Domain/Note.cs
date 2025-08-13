@@ -1,4 +1,4 @@
-namespace Api.Infrastructure.Models;
+namespace Shared.Domain;
 
 public class Note
 {
@@ -6,3 +6,5 @@ public class Note
     public string Text { get; set; } = default!;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
+
+

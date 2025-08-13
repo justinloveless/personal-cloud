@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using Api.Infrastructure;
+using Shared.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
@@ -40,11 +40,11 @@ await using (var cmd = new NpgsqlCommand($"create database \"{dbName}\" owner \"
 
 // 2) Apply EF migrations programmatically against the tenant DB
 var csb = new NpgsqlConnectionStringBuilder(adminCs) { Database = dbName }.ToString();
-var opts = new DbContextOptionsBuilder<Api.Infrastructure.AppDbContext>()
+var opts = new DbContextOptionsBuilder<Shared.Persistence.AppDbContext>()
     .UseNpgsql(csb)
     .Options;
 
-using (var ctx = new Api.Infrastructure.AppDbContext(opts))
+using (var ctx = new Shared.Persistence.AppDbContext(opts))
 {
     await ctx.Database.MigrateAsync(); // Will no-op until you create migrations
     Console.WriteLine("Applied migrations (if any).");
