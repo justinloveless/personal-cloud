@@ -13,6 +13,11 @@ lovelesslabs.net {
   encode gzip
   @api path /api/*
   handle @api {
+    reverse_proxy api:8080
+  }
+  
+  # Everything else (root site) -> simple OK
+  handle {
     respond "OK" 200
   }
 }
