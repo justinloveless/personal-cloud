@@ -10,7 +10,7 @@ RUN dotnet restore Orchestrator/Orchestrator.csproj
 RUN dotnet publish Orchestrator/Orchestrator.csproj -c Release -o /out
 
 # runtime
-FROM mcr.microsoft.com/dotnet/runtime:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /out ./
 ENTRYPOINT ["dotnet", "Orchestrator.dll"]
