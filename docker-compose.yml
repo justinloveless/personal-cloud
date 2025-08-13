@@ -24,6 +24,16 @@ services:
     depends_on: [ pgbouncer, postgres ]
     restart: unless-stopped
 
+  orchestrator:
+    build:
+      context: .
+      dockerfile: build/Orchestrator.Dockerfile
+    env_file: ./.env
+    environment:
+      - ConnectionStrings__Admin=${ConnectionStrings__Admin}
+    depends_on: [ pgbouncer, postgres ]
+    restart: unless-stopped
+
   pgbouncer:
     image: edoburu/pgbouncer
     environment:
