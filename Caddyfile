@@ -2,14 +2,17 @@
   email justinlovelessx@gmail.com
 }
 
-lovelesslabs.net, *.lovelesslabs.net {
+*.lovelesslabs.net {
   tls {
     dns hetzner {env.HETZNER_API_TOKEN}
   }
+  reverse_proxy api:8080
+}
+
+lovelesslabs.net {
   encode gzip
   @api path /api/*
-  reverse_proxy @api api:8080
-  handle {
+  handle @api {
     respond "OK" 200
   }
 }
