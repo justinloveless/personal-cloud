@@ -63,12 +63,20 @@ app.MapPost("/api/admin/tenants", async (HttpContext ctx) =>
 
     // 2) Apply EF migrations programmatically against the tenant DB
     var csb = new NpgsqlConnectionStringBuilder(adminCs) { Database = dbName }.ToString();
-    var opts = new DbContextOptionsBuilder<Shared.Persistence.AppDbContext>()
+    var opts = new DbContextOptionsBuilder<AppDbContext>()
         .UseNpgsql(csb)
         .Options;
     using (var ctxDb = new AppDbContext(opts))
     {
-        await ctxDb.Database.MigrateAsync();
+        var hasMigrations = ctxDb.Database.GetMigrations().Any();
+        if (hasMigrations)
+        {
+            await ctxDb.Database.MigrateAsync();
+        }
+        else
+        {
+            await ctxDb.Database.EnsureCreatedAsync();
+        }
     }
 
     // 3) Register tenant in admin.tenants

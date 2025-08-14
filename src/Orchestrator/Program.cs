@@ -46,8 +46,17 @@ var opts = new DbContextOptionsBuilder<Shared.Persistence.AppDbContext>()
 
 using (var ctx = new Shared.Persistence.AppDbContext(opts))
 {
-    await ctx.Database.MigrateAsync(); // Will no-op until you create migrations
-    Console.WriteLine("Applied migrations (if any).");
+    var hasMigrations = ctx.Database.GetMigrations().Any();
+    if (hasMigrations)
+    {
+        await ctx.Database.MigrateAsync();
+        Console.WriteLine("Applied migrations.");
+    }
+    else
+    {
+        await ctx.Database.EnsureCreatedAsync();
+        Console.WriteLine("Ensured schema created (no migrations found).");
+    }
 }
 
 // 3) Register tenant in admin.tenants
