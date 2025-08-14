@@ -105,6 +105,9 @@ app.MapGet("/api/notes", async (AppDbContext db) =>
 
 app.MapPost("/api/notes", async (AppDbContext db, Note input) =>
 {
+    // Sanitize client-provided fields and enforce UTC timestamp
+    input.Id = 0;
+    input.CreatedAt = DateTime.UtcNow;
     db.Notes.Add(input);
     await db.SaveChangesAsync();
     return Results.Created($"/api/notes/{input.Id}", input);
